@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -22,6 +22,8 @@ import { useRaisedShadow } from "./use-raised-shadow";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
+import { toast } from "sonner";
+
 interface ItemProps {
   draggable: boolean;
   item: any;
@@ -41,10 +43,16 @@ export default function Item(props: ItemProps) {
     }
     return img;
   }
+  const [isOpen, setIsOpen] = useState(false);
+  const [slidetitle, setslidetitle] = useState("Unnamed Slide");
+  function handlesubmit() {
+    setIsOpen(false);
+    toast("Slidetitle set to " + slidetitle);
+  }
 
   return (
     <div className="m-4">
-      <Dialog>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Edit Slide</DialogTitle>
@@ -59,8 +67,9 @@ export default function Item(props: ItemProps) {
               </Label>
               <Input
                 id="name"
-                defaultValue="Unnamed Slide"
+                value={slidetitle}
                 className="col-span-3"
+                onChange={(e) => setslidetitle(e.target.value)}
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -71,7 +80,9 @@ export default function Item(props: ItemProps) {
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Save changes</Button>
+            <Button type="submit" onClick={handlesubmit}>
+              Save changes
+            </Button>
           </DialogFooter>
         </DialogContent>
         <Reorder.Item
