@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ReactElement, useState } from "react";
 import {
   Card,
   CardContent,
@@ -25,11 +25,11 @@ import { Input } from "./ui/input";
 import { toast } from "sonner";
 
 interface ItemProps {
-  draggable: boolean;
   item: any;
   title: string;
   desc: string;
-  previmg: string;
+  previmg: ReactElement;
+  onChange: Function;
 }
 
 export default function Item(props: ItemProps) {
@@ -45,9 +45,18 @@ export default function Item(props: ItemProps) {
   }
   const [isOpen, setIsOpen] = useState(false);
   const [slidetitle, setslidetitle] = useState("Unnamed Slide");
+  const [slidedesc, setslidedesc] = useState("Description");
+  const [file, setFile] = useState<File | null>(null);
+
   function handlesubmit() {
-    setIsOpen(false);
-    toast("Slidetitle set to " + slidetitle);
+    var filecontent = "";
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      filecontent = e.target?.result as string;
+      console.log(filecontent);
+      props.onChange(props.title, slidetitle, slidedesc, filecontent);
+    };
+    if (file) reader.readAsText(file);
   }
 
   return (
@@ -73,10 +82,30 @@ export default function Item(props: ItemProps) {
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="html" className="text-right">
-                Html
+              <Label htmlFor="desc" className="text-right">
+                Description
               </Label>
-              <Input id="html" type="file" className="col-span-3" />
+              <Input
+                id="desc"
+                value={slidedesc}
+                className="col-span-3"
+                onChange={(e) => setslidedesc(e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="html" className="text-right">
+                HTML
+              </Label>
+              <Input
+                id="html"
+                type="file"
+                onChange={(e) => {
+                  if (e.target.files !== null) {
+                    setFile(e.target.files[0]);
+                  }
+                }}
+                className="col-span-3"
+              />
             </div>
           </div>
           <DialogFooter>
@@ -95,18 +124,21 @@ export default function Item(props: ItemProps) {
           <Card>
             <CardHeader>
               <CardTitle>{props.title}</CardTitle>
-              {props.draggable == true && (
-                <ReorderIcon dragControls={dragControls} />
-              )}
+
               <CardDescription>{props.desc}</CardDescription>
             </CardHeader>
             <CardContent>
-              <img
-                src={verifyimg(props.previmg)}
-                width={200}
-                height={150}
-                alt="Preview Image"
-              />
+              <div className="flex">
+                <div className="bg-neutral-800 rounded-2xl p-5 w-max h-max ">
+                  <h1 className="text-2xl m-2">Slide Preview</h1>
+                  <div className="bg-neutral-600 rounded-2xl p-5  min-w-86 min-h-64 w-max h-max">
+                    {props.previmg}
+                  </div>
+                </div>
+                <div className="flex ml-auto mr-0 items-center">
+                  <ReorderIcon dragControls={dragControls} />
+                </div>
+              </div>
             </CardContent>
             <CardFooter>
               <DialogTrigger asChild>

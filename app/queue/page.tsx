@@ -1,59 +1,56 @@
 "use client";
 
 import Item from "@/components/Item";
+import ItemUneditable from "@/components/ItemUneditable";
 import { Reorder } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import ReactHtmlParser from "react-html-parser";
 
 export default function Queue() {
-  const Slides = [
+  const [slides, setslides] = useState([
     {
-      id: "fghkghk",
       title: "Slide 1",
-      desc: "Slide 1 Description",
-      previmgurl:
-        "https://www.appgefahren.de/wp-content/uploads/2020/06/wetter-icon.jpg",
+      desc: "Slide 1",
+      html: "<h1>Slide 1</h1>",
     },
     {
-      id: "fgzshkmzu",
       title: "Slide 2",
-      desc: "Slide 2 Description",
-      previmgurl:
-        "https://esrp5wss3st.exactdn.com/wp-content/uploads/2022/07/Google-calendar-ID-Foresight-by-xFanatical-1.jpg?strip=all&lossy=1&ssl=1",
+      desc: "Slide 2",
+      html: "<h1>Slide 2</h1>",
     },
     {
-      id: "dyfahgdyfh",
       title: "Slide 3",
-      desc: "Slide 3 Description",
-      previmgurl:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQda2CXUj3q5fLA-N3FBCrhm5nxHSIctgI-qw&s",
+      desc: "Slide 3",
+      html: "<h1>Slide 3</h1>",
     },
     {
-      id: "duipfdsgthsfjgtfrghn",
       title: "Slide 4",
-      desc: "Slide 4 Description",
-      previmgurl: "",
+      desc: "Slide 4",
+      html: "<h1>Slide 4</h1>",
     },
-    {
-      id: "dfgzjjfs",
-      title: "Slide 5",
-      desc: "Slide 5 Description",
-      previmgurl: "",
-    },
-  ];
+  ]);
 
-  const [slides, setslides] = useState(Slides);
+  useEffect(() => {
+    fetch("http://localhost:3000")
+      .then((response) => response.json())
+      .then((data) => setslides(data));
+  }, []);
+  // ...
+
+  function getprevimg(html: string) {
+    return <div>{ReactHtmlParser(html)}</div>;
+  }
 
   return (
     <div>
       <Reorder.Group axis="y" onReorder={setslides} values={slides}>
         {slides.map((slide, index) => (
-          <Item
-            draggable={false}
+          <ItemUneditable
             item={slide}
             key={slide.title}
             title={slide.title}
             desc={slide.desc}
-            previmg={slide.previmgurl}
+            previmg={getprevimg(slide.html)}
           />
         ))}
       </Reorder.Group>
