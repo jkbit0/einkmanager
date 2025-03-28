@@ -27,11 +27,11 @@ export default function Queue() {
       title: "Slide 4",
       desc: "Slide 4",
       html: "<h1>Slide 4</h1>",
-    },
+    }
   ]);
 
   useEffect(() => {
-    fetch("http://localhost:3000")
+    fetch("http://"+ process.env.BACKEND_SERVER )
       .then((response) => response.json())
       .then((data) => setslides(data));
   }, []);

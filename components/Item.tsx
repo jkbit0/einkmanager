@@ -23,26 +23,22 @@ import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { toast } from "sonner";
+import { MdDelete } from "react-icons/md";
 
 interface ItemProps {
   item: any;
   title: string;
   desc: string;
+  html: string;
   previmg: ReactElement;
   onChange: Function;
+  onDelete: Function;
 }
 
 export default function Item(props: ItemProps) {
   const y = useMotionValue(0);
   const dragControls = useDragControls();
   const boxShadow = useRaisedShadow(y);
-
-  function verifyimg(img: string) {
-    if (img == "") {
-      return "https://placehold.co/200x150";
-    }
-    return img;
-  }
   const [isOpen, setIsOpen] = useState(false);
   const [slidetitle, setslidetitle] = useState("Unnamed Slide");
   const [slidedesc, setslidedesc] = useState("Description");
@@ -57,6 +53,15 @@ export default function Item(props: ItemProps) {
       props.onChange(props.title, slidetitle, slidedesc, filecontent);
     };
     if (file) reader.readAsText(file);
+    if (file == null) {
+      props.onChange(props.title, slidetitle, slidedesc, props.html);
+    }
+  
+  }
+
+  function handledelete() {
+    props.onDelete(props.title)
+    console.log("Delete Reqeusted by: " + props.title)
   }
 
   return (
@@ -141,8 +146,9 @@ export default function Item(props: ItemProps) {
               </div>
             </CardContent>
             <CardFooter>
+              <Button variant="outline" className="mr-3" onClick={handledelete}><MdDelete className="text-red-400" /></Button>
               <DialogTrigger asChild>
-                <Button variant="outline">Edit Slide</Button>
+                <Button variant="outline" >Edit Slide</Button>
               </DialogTrigger>
             </CardFooter>
           </Card>
