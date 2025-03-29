@@ -61,7 +61,7 @@ export default function Item(props: ItemProps) {
 
   function handledelete() {
     props.onDelete(props.title)
-    console.log("Delete Reqeusted by: " + props.title)
+    console.log("Delete Requested by: " + props.title)
   }
 
   return (
@@ -129,7 +129,6 @@ export default function Item(props: ItemProps) {
           <Card>
             <CardHeader>
               <CardTitle>{props.title}</CardTitle>
-
               <CardDescription>{props.desc}</CardDescription>
             </CardHeader>
             <CardContent>
